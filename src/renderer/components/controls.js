@@ -51,10 +51,32 @@ export class Controls {
         <input type="number" name="maxWeight" value="${this.palletConfig.maxWeight}" min="1" required />
       </label>
 
+      <table id="item-table">
+  <thead>
+    <tr>
+      <th>SKU</th>
+      <th>Width (mm)</th>
+      <th>Depth (mm)</th>
+      <th>Height (mm)</th>
+      <th>Weight (kg)</th>
+      <th>Qty</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="item-rows">
+    <!-- rows added dynamically by addItem() -->
+  </tbody>
+</table>
+<button type="button" id="add-item-btn">+ Add Item</button>
+
       <div id="controls-error" hidden></div>
       <button type="submit">Run Optimization</button>
+      
     </form>
   `;
+  this.container.querySelector("#add-item-btn").addEventListener("click", () => {
+  this.addItem({ id: Date.now(), sku: "", width: 0, depth: 0, height: 0, weight: 0, qty: 1 });
+});
 
 		const form = this.container.querySelector("form");
 		["width", "depth", "maxHeight", "maxWeight"].forEach((field) => {
@@ -78,12 +100,29 @@ export class Controls {
 	// Data management
 	// ---------------------------------------------------------------------------
 
-	// TODO: addItem(item)
-	//   - Append a new item to the list and re-render the item table
+    addItem(item) {
+    this.items.push(item);
+    const tbody = this.container.querySelector("#item-rows");
+    const tr = document.createElement("tr");
+    tr.dataset.id = item.id;
+    tr.innerHTML = `
+      <td><input type="text" name="sku" value="${item.sku}" required /></td>
+      <td><input type="number" name="width" value="${item.width}" min="1" required /></td>
+      <td><input type="number" name="depth" value="${item.depth}" min="1" required /></td>
+      <td><input type="number" name="height" value="${item.height}" min="1" required /></td>
+      <td><input type="number" name="weight" value="${item.weight}" min="0.01" step="0.01" required /></td>
+      <td><input type="number" name="qty" value="${item.qty}" min="1" required /></td>
+      <td><button type="button" class="remove-item-btn">Remove</button></td>
+    `;
+    tr.querySelector(".remove-item-btn").addEventListener("click", () => this.removeItem(item.id));
+    tbody.appendChild(tr);
+    }
 
-	// TODO: removeItem(id)
-	//   - Remove an item by id
-
+	removeItem(id) {
+    this.items = this.items.filter((item) => item.id !== id);
+    const row = this.container.querySelector(`tr[data-id="${id}"]`);
+    if (row) row.remove();
+  }
 	// TODO: importItemsFromCSV(file)
 	//   - Parse a CSV file and populate the items list
 
