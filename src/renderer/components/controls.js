@@ -15,69 +15,124 @@
 // TODO: Import any small UI helpers (e.g. createField, createButton)
 
 export class Controls {
-  constructor(container) {
-    // TODO: Store container reference
-    // TODO: Initialize internal state: palletConfig, items[], constraints
-    // TODO: Initialize callback slots: _onRunCallback, _onItemsChangeCallback
-  }
+	constructor(container) {
+		this.container = container;
+		this.palletConfig = {
+			width: 1200,
+			depth: 1000,
+			maxHeight: 2200,
+			maxWeight: 1000,
+		};
+		this.items = [];
+		this.constraints = {};
+		this._onRunCallback = null;
+		this._onItemsChangeCallback = null;
+	}
 
-  // ---------------------------------------------------------------------------
-  // Lifecycle
-  // ---------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------
+	// Lifecycle
+	// ---------------------------------------------------------------------------
 
-  // TODO: render()
-  //   - Build form sections:
-  //       * Pallet config (width / depth / maxHeight / maxWeight)
-  //       * Item list with add / edit / delete rows
-  //       * CSV/JSON import button
-  //       * Constraints (allow rotation, stackable only, fragile-on-top, etc.)
-  //       * Run button
-  //   - Attach event listeners for all inputs
-  //   - Wire submit handler to collect payload and invoke _onRunCallback
+	render() {
+		this.container.innerHTML = `
+    <form id="optimization-controls" novalidate>
+      <h2>Pallet Configuration</h2>
 
-  // TODO: destroy()
-  //   - Remove event listeners and clear the container
+      <label>Width (mm)
+        <input type="number" name="width" value="${this.palletConfig.width}" min="1" required />
+      </label>
+      <label>Depth (mm)
+        <input type="number" name="depth" value="${this.palletConfig.depth}" min="1" required />
+      </label>
+      <label>Max Height (mm)
+        <input type="number" name="maxHeight" value="${this.palletConfig.maxHeight}" min="1" required />
+      </label>
+      <label>Max Weight (kg)
+        <input type="number" name="maxWeight" value="${this.palletConfig.maxWeight}" min="1" required />
+      </label>
 
-  // ---------------------------------------------------------------------------
-  // Data management
-  // ---------------------------------------------------------------------------
+      <div id="controls-error" hidden></div>
+      <button type="submit">Run Optimization</button>
+    </form>
+  `;
 
-  // TODO: addItem(item)
-  //   - Append a new item to the list and re-render the item table
+		const form = this.container.querySelector("form");
+		["width", "depth", "maxHeight", "maxWeight"].forEach((field) => {
+			form.elements[field].addEventListener("input", (e) => {
+				this.palletConfig[field] = Number(e.target.value);
+			});
+		});
 
-  // TODO: removeItem(id)
-  //   - Remove an item by id
+		form.addEventListener("submit", (e) => {
+			e.preventDefault();
+			if (!this._validate()) return;
+			if (this._onRunCallback) this._onRunCallback(this.getPayload());
+		});
+	}
 
-  // TODO: importItemsFromCSV(file)
-  //   - Parse a CSV file and populate the items list
+	destroy() {
+		this.container.innerHTML = "";
+	}
 
-  // TODO: getPayload()
-  //   - Collate palletConfig + items + constraints into the shape expected by
-  //     the backend API:
-  //       {
-  //         pallet: { width, depth, maxHeight, maxWeight },
-  //         items: [{ id, width, depth, height, weight, qty, rotatable, fragile }],
-  //         constraints: { ... }
-  //       }
+	// ---------------------------------------------------------------------------
+	// Data management
+	// ---------------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------------
-  // State
-  // ---------------------------------------------------------------------------
+	// TODO: addItem(item)
+	//   - Append a new item to the list and re-render the item table
 
-  // TODO: setLoading(isLoading)
-  //   - Disable the Run button and inputs while an optimization is in-flight
+	// TODO: removeItem(id)
+	//   - Remove an item by id
 
-  // TODO: showValidationError(message)
-  //   - Display inline validation errors before submission
+	// TODO: importItemsFromCSV(file)
+	//   - Parse a CSV file and populate the items list
 
-  // ---------------------------------------------------------------------------
-  // Events
-  // ---------------------------------------------------------------------------
+	getPayload() {
+		return {
+			pallet: { ...this.palletConfig },
+			items: [...this.items], // populated in FE-2
+			constraints: { ...this.constraints }, // populated in FE-3
+		};
+	}
 
-  // TODO: onRun(callback)
-  //   - Register a listener that receives the full payload when the user
-  //     submits the form
+	// ---------------------------------------------------------------------------
+	// State
+	// ---------------------------------------------------------------------------
 
-  // TODO: onItemsChange(callback)
-  //   - Optional: notify the 3D viewer in real time as items are added/removed
+	// TODO: setLoading(isLoading)
+	//   - Disable the Run button and inputs while an optimization is in-flight
+
+	showValidationError(message) {
+		const el = this.container.querySelector("#controls-error");
+		if (!el) return;
+		el.textContent = message;
+		el.hidden = !message;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Events
+	// ---------------------------------------------------------------------------
+
+	onRun(callback) {
+		this._onRunCallback = callback;
+	}
+
+	// TODO: onItemsChange(callback)
+	//   - Optional: notify the 3D viewer in real time as items are added/removed
+
+	// ---------------------------------------------------------------------------
+	// Private
+	// ---------------------------------------------------------------------------
+
+	_validate() {
+		const { width, depth, maxHeight, maxWeight } = this.palletConfig;
+		if (!width || !depth || !maxHeight || !maxWeight) {
+			this.showValidationError(
+				"All pallet dimensions and max weight are required.",
+			);
+			return false;
+		}
+		this.showValidationError("");
+		return true;
+	}
 }
