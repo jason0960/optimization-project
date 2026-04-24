@@ -23,9 +23,9 @@ Points use a Fibonacci scale (1, 2, 3, 5, 8, 13). Total: **~110 pts**.
 
 ### Epic 1 — Project setup & tooling  *(Total: 8 pts)*
 
-- [ ] **SETUP-1** · Initialize npm project and install Three.js · **2 pts**
-- [ ] **SETUP-2** · Add Vite (or similar) dev server with hot reload · **2 pts**
-- [ ] **SETUP-3** · Configure ESLint + Prettier with project conventions · **1 pt**
+- [x] **SETUP-1** · Initialize npm project and install Three.js · **2 pts**
+- [x] **SETUP-2** · Add Vite (or similar) dev server with hot reload · **2 pts**
+- [x] **SETUP-3** · Configure ESLint + Prettier with project conventions · **1 pt**
 - [ ] **SETUP-4** · Scaffold Java back-end (Spring Boot + Gradle/Maven) · **3 pts**
 
 ### Epic 2 — Front-end: Data entry & controls  *(Total: 16 pts)*
