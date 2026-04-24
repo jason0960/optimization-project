@@ -2,6 +2,9 @@
   "name": "optimization-project",
   "version": "1.0.0",
   "description": "A pallet optimization builder with a **JavaScript + Three.js front-end** and a **Java back-end** that runs the 3D bin-packing / optimization algorithms.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
