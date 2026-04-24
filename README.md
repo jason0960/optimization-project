@@ -25,13 +25,12 @@ Points use a Fibonacci scale (1, 2, 3, 5, 8, 13). Total: **~110 pts**.
 
 - [x] **SETUP-1** · Initialize npm project and install Three.js · **2 pts**
 - [x] **SETUP-2** · Add Vite (or similar) dev server with hot reload · **2 pts**
-- [x] **SETUP-3** · Configure ESLint + Prettier with project conventions · **1 pt**
-- [ ] **SETUP-4** · Scaffold Java back-end (Spring Boot + Gradle/Maven) · **3 pts**
+- [ ] **SETUP-3** · Scaffold Java back-end (Spring Boot + Gradle/Maven) · **3 pts**
 
 ### Epic 2 — Front-end: Data entry & controls  *(Total: 16 pts)*
 
-- [ ] **FE-1** · Build pallet config form (width, depth, max height, max weight) · **2 pts**
-- [ ] **FE-2** · Build add/edit/delete item table (SKU, dims, weight, qty) · **5 pts**
+- [x] **FE-1** · Build pallet config form (width, depth, max height, max weight) · **2 pts**
+- [x] **FE-2** · Build add/edit/delete item table (SKU, dims, weight, qty) · **5 pts**
 - [ ] **FE-3** · Add constraints UI (rotatable, fragile, stackable) · **3 pts**
 - [ ] **FE-4** · CSV/JSON import for bulk item loading · **3 pts**
 - [ ] **FE-5** · Form validation & inline error messages · **2 pts**
@@ -118,3 +117,8 @@ Points use a Fibonacci scale (1, 2, 3, 5, 8, 13). Total: **~110 pts**.
 - Gradle or Maven
 - PostgreSQL (H2 for local dev)
 - Optimization: TBD (Google OR-Tools Java bindings, EB-AFIT port, or custom heuristic)
+
+
+## Future hotfixes
+
+- **Item row inputs don't sync back to `this.items`** (`controls.js` — `addItem`): When a user edits a field in an item row (e.g. changes the width after adding), the new value is not written back to the `this.items` array. `getPayload()` will return the original values from when the row was created. Fix: add `input` event listeners on each row's fields inside `addItem()` that update the matching item in `this.items` by id.
