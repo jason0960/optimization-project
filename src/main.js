@@ -1,7 +1,7 @@
-/**
- * Application entry point.
- * Bootstraps the Renderer with the DOM containers defined in index.html.
- */
+import { Controls } from './renderer/components/controls.js';
+
+const controls = new Controls(document.getElementById('controls-container'));
+controls.render();
 
 // TODO: import { Renderer } from './renderer/index.js';
 
