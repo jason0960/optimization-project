@@ -24,10 +24,15 @@ export class Controls {
 			maxWeight: 1000,
 		};
 		this.items = [];
-		this.constraints = {};
 		this._onRunCallback = null;
 		this._onItemsChangeCallback = null;
-	}
+	
+  this.constraints = {
+    allowRotation: true,
+    fragileOnTop: false,
+    stackableOnly: false,
+  };
+}
 
 	// ---------------------------------------------------------------------------
 	// Lifecycle
@@ -69,6 +74,22 @@ export class Controls {
 </table>
 <button type="button" id="add-item-btn">+ Add Item</button>
 
+<section>
+  <h2>Constraints</h2>
+  <label>
+    <input type="checkbox" name="allowRotation" checked />
+    Allow item rotation
+  </label>
+  <label>
+    <input type="checkbox" name="fragileOnTop" />
+    Fragile items on top
+  </label>
+  <label>
+    <input type="checkbox" name="stackableOnly" />
+    Stackable items only
+  </label>
+</section>
+
       <div id="controls-error" hidden></div>
       <button type="submit">Run Optimization</button>
       
@@ -84,6 +105,12 @@ export class Controls {
 				this.palletConfig[field] = Number(e.target.value);
 			});
 		});
+
+    ["allowRotation", "fragileOnTop", "stackableOnly"].forEach((field) => {
+  form.elements[field].addEventListener("change", (e) => {
+    this.constraints[field] = e.target.checked;
+  });
+});
 
 		form.addEventListener("submit", (e) => {
 			e.preventDefault();
