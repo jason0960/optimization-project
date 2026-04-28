@@ -121,6 +121,7 @@ export class Controls {
         const file = e.target.files[0];
         if (!file) return;
         this.importItemsFromFile(file);
+        e.target.value = "";
       });
 
     this.container
