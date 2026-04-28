@@ -207,8 +207,19 @@ export class Controls {
   // State
   // ---------------------------------------------------------------------------
 
-  // TODO: setLoading(isLoading)
-  //   - Disable the Run button and inputs while an optimization is in-flight
+  setLoading(isLoading) {
+    const form = this.container.querySelector("form");
+    if (!form) return;
+
+    Array.from(form.elements).forEach((el) => {
+      el.disabled = isLoading;
+    });
+
+    const submitBtn = form.querySelector("[type='submit']");
+    if (submitBtn) {
+      submitBtn.textContent = isLoading ? "Optimizing…" : "Run Optimization";
+    }
+  }
 
   showValidationError(message) {
     const el = this.container.querySelector("#controls-error");
@@ -232,61 +243,82 @@ export class Controls {
   // Private
   // ---------------------------------------------------------------------------
 
-_validate() {
-  const palletOk = this._validatePallet();
-  const itemsOk = this._validateItems();
-  return palletOk && itemsOk;
-}
-
-_validatePallet() {
-  const form = this.container.querySelector("form");
-  let valid = true;
-  const rules = [
-    { field: "width",     label: "Width is required" },
-    { field: "depth",     label: "Depth is required" },
-    { field: "maxHeight", label: "Max height is required" },
-    { field: "maxWeight", label: "Max weight is required" },
-  ];
-  for (const { field, label } of rules) {
-    const input = form.elements[field];
-    const val = Number(input.value);
-    const msg = (!input.value || val <= 0) ? label : "";
-    this._setFieldError(input, msg);
-    if (msg) valid = false;
+  _validate() {
+    const palletOk = this._validatePallet();
+    const itemsOk = this._validateItems();
+    return palletOk && itemsOk;
   }
-  return valid;
-}
 
-_validateItems() {
-  if (this.items.length === 0) {
-    this.showValidationError("Add at least one item before optimizing.");
-    return false;
-  }
-  this.showValidationError("");
-
-  let valid = true;
-  const rows = this.container.querySelectorAll("#item-rows tr");
-  for (const tr of rows) {
-    const sku    = tr.querySelector("[name='sku']");
-    const width  = tr.querySelector("[name='width']");
-    const depth  = tr.querySelector("[name='depth']");
-    const height = tr.querySelector("[name='height']");
-    const weight = tr.querySelector("[name='weight']");
-    const qty    = tr.querySelector("[name='qty']");
-
-    this._setFieldError(sku,    sku.value.trim()     === "" ? "SKU is required"         : "");
-    this._setFieldError(width,  Number(width.value)  <= 0   ? "Must be greater than 0"             : "");
-    this._setFieldError(depth,  Number(depth.value)  <= 0   ? "Must be greater than 0"             : "");
-    this._setFieldError(height, Number(height.value) <= 0   ? "Must be greater than 0"             : "");
-    this._setFieldError(weight, Number(weight.value) <= 0   ? "Must be greater than 0"             : "");
-    this._setFieldError(qty,    Number(qty.value)    <= 0    ? "Must be at least 1"      : "");
-
-    if (!sku.value.trim() || [width, depth, height, weight, qty].some(i => Number(i.value) <= 0)) {
-      valid = false;
+  _validatePallet() {
+    const form = this.container.querySelector("form");
+    let valid = true;
+    const rules = [
+      { field: "width", label: "Width is required" },
+      { field: "depth", label: "Depth is required" },
+      { field: "maxHeight", label: "Max height is required" },
+      { field: "maxWeight", label: "Max weight is required" },
+    ];
+    for (const { field, label } of rules) {
+      const input = form.elements[field];
+      const val = Number(input.value);
+      const msg = !input.value || val <= 0 ? label : "";
+      this._setFieldError(input, msg);
+      if (msg) valid = false;
     }
+    return valid;
   }
-  return valid;
-}
+
+  _validateItems() {
+    if (this.items.length === 0) {
+      this.showValidationError("Add at least one item before optimizing.");
+      return false;
+    }
+    this.showValidationError("");
+
+    let valid = true;
+    const rows = this.container.querySelectorAll("#item-rows tr");
+    for (const tr of rows) {
+      const sku = tr.querySelector("[name='sku']");
+      const width = tr.querySelector("[name='width']");
+      const depth = tr.querySelector("[name='depth']");
+      const height = tr.querySelector("[name='height']");
+      const weight = tr.querySelector("[name='weight']");
+      const qty = tr.querySelector("[name='qty']");
+
+      this._setFieldError(
+        sku,
+        sku.value.trim() === "" ? "SKU is required" : "",
+      );
+      this._setFieldError(
+        width,
+        Number(width.value) <= 0 ? "Must be greater than 0" : "",
+      );
+      this._setFieldError(
+        depth,
+        Number(depth.value) <= 0 ? "Must be greater than 0" : "",
+      );
+      this._setFieldError(
+        height,
+        Number(height.value) <= 0 ? "Must be greater than 0" : "",
+      );
+      this._setFieldError(
+        weight,
+        Number(weight.value) <= 0 ? "Must be greater than 0" : "",
+      );
+      this._setFieldError(
+        qty,
+        Number(qty.value) <= 0 ? "Must be at least 1" : "",
+      );
+
+      if (
+        !sku.value.trim() ||
+        [width, depth, height, weight, qty].some((i) => Number(i.value) <= 0)
+      ) {
+        valid = false;
+      }
+    }
+    return valid;
+  }
 
   _parseCSV(text) {
     const [headerLine, ...rows] = text.trim().split("\n");
