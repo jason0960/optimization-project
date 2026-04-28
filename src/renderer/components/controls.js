@@ -73,7 +73,8 @@ export class Controls {
   </tbody>
 </table>
 <button type="button" id="add-item-btn">+ Add Item</button>
-
+<button type="button" id="import-btn" style="cursor:pointer">Import CSV / JSON</button>
+<input type="file" id="import-csv-input" accept=".csv, .json" hidden />
 <section>
   <h2>Constraints</h2>
   <label>
@@ -105,6 +106,16 @@ export class Controls {
 				this.palletConfig[field] = Number(e.target.value);
 			});
 		});
+
+      this.container.querySelector("#import-csv-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+  if (!file) return;
+this.importItemsFromFile(file);
+});
+
+this.container.querySelector("#import-btn").addEventListener("click", () => {
+  this.container.querySelector("#import-csv-input").click();
+});
 
     ["allowRotation", "fragileOnTop", "stackableOnly"].forEach((field) => {
   form.elements[field].addEventListener("change", (e) => {
@@ -150,8 +161,17 @@ export class Controls {
     const row = this.container.querySelector(`tr[data-id="${id}"]`);
     if (row) row.remove();
   }
-	// TODO: importItemsFromCSV(file)
-	//   - Parse a CSV file and populate the items list
+  importItemsFromFile(file){
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      const items = file.name.endsWith(".json")
+      ? JSON.parse(text)
+      : this._parseCSV(text);
+      items.forEach((item) => this.addItem({ id: Date.now() + Math.random(), ...item}));
+    };
+    reader.readAsText(file);
+  }
 
 	getPayload() {
 		return {
@@ -201,4 +221,13 @@ export class Controls {
 		this.showValidationError("");
 		return true;
 	}
+
+  _parseCSV(text) {
+  const [headerLine, ...rows] = text.trim().split("\n");
+  const headers = headerLine.split(",").map((h) => h.trim());
+  return rows.map((row) => {
+    const values = row.split(",").map((v) => v.trim());
+    return Object.fromEntries(headers.map((h, i) => [h, isNaN(values[i]) ? values[i] : Number(values[i])]));
+  });
+}
 }
