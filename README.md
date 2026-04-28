@@ -33,7 +33,7 @@ Points use a Fibonacci scale (1, 2, 3, 5, 8, 13). Total: **~110 pts**.
 - [x] **FE-2** · Build add/edit/delete item table (SKU, dims, weight, qty) · **5 pts**
 - [x] **FE-3** · Add constraints UI (rotatable, fragile, stackable) · **3 pts**
 - [x] **FE-4** · CSV/JSON import for bulk item loading · **3 pts**
-- [ ] **FE-5** · Form validation & inline error messages · **2 pts**
+- [x] **FE-5** · Form validation & inline error messages · **2 pts**
 - [ ] **FE-6** · Loading / disabled state while optimization runs · **1 pt**
 
 ### Epic 3 — Front-end: 3D pallet viewer (Three.js)  *(Total: 21 pts)*
@@ -120,5 +120,3 @@ Points use a Fibonacci scale (1, 2, 3, 5, 8, 13). Total: **~110 pts**.
 
 
 ## Future hotfixes
-
-- **Item row inputs don't sync back to `this.items`** (`controls.js` — `addItem`): When a user edits a field in an item row (e.g. changes the width after adding), the new value is not written back to the `this.items` array. `getPayload()` will return the original values from when the row was created. Fix: add `input` event listeners on each row's fields inside `addItem()` that update the matching item in `this.items` by id.
