@@ -155,11 +155,11 @@ export class Controls {
     const tbody = this.container.querySelector("#item-rows");
     const tr = document.createElement("tr");
     tr.dataset.id = item.id;
-const escapedSku = item.sku.toString()
-  .replace(/&/g, "&amp;")
-  .replace(/"/g, "&quot;")
-  .replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;");
+    const escapedSku = String(item.sku ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
     tr.innerHTML = `
       <td><input type="text" name="sku" value="${escapedSku}" required /></td>
       <td><input type="number" name="width" value="${item.width}" min="1" required /></td>
