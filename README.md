@@ -34,7 +34,7 @@ Points use a Fibonacci scale (1, 2, 3, 5, 8, 13). Total: **~110 pts**.
 - [x] **FE-3** · Add constraints UI (rotatable, fragile, stackable) · **3 pts**
 - [x] **FE-4** · CSV/JSON import for bulk item loading · **3 pts**
 - [x] **FE-5** · Form validation & inline error messages · **2 pts**
-- [ ] **FE-6** · Loading / disabled state while optimization runs · **1 pt**
+- [x] **FE-6** · Loading / disabled state while optimization runs · **1 pt**
 
 ### Epic 3 — Front-end: 3D pallet viewer (Three.js)  *(Total: 21 pts)*
 
